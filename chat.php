@@ -1,27 +1,23 @@
 <?php
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+require_once 'database/conexao.php';
+require_once 'config.php';
+
+$db = conn();
 
 
-    require_once 'database/conexao.php';
-    require_once 'config.php';
+$query = "SELECT * FROM chat.chat";
 
-    $db = conn();
+$stmt = $db->prepare($query);
 
-    $nome = isset($_POST['nome']) && !empty($_POST['nome']) ? $_POST['nome'] : null;
-    $mensagem = isset($_POST['mensagem']) && !empty($_POST['mensagem']) ? $_POST['mensagem'] : null;
+$stmt->execute();
 
-    $query = "SELECT * FROM chat.chat";
+$resultado = $stmt->get_result();
 
-    $stmt = $db->prepare($query);
+$pegar_dados = $resultado->fetch_all(MYSQLI_ASSOC);
 
-    $stmt->execute();
 
-    foreach ($res->fetch_all() as $key) {
-        echo "<h3>" . $key['nome'] . "</h3>";
-        echo "<h5>" . $key['mensagem'] . "</h5>";
-    }
-} else {
-    die();
-    header('Location: index.php');
+foreach ($pegar_dados as $key => $value) {
+    echo "<h3>" . $value['nome'] . "</h3>";
+    echo "<h5>" . $value['mensagem'] . "</h5>";
 }
